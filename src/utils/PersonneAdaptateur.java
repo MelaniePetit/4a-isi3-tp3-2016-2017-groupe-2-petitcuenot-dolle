@@ -4,11 +4,12 @@ import persons.IPerson;
 import java.util.GregorianCalendar;
 
 /**
+ *
  * Created by jeremy on 29/03/2017.
  */
 public class PersonneAdaptateur implements IPerson {
 
-    Personne personne;
+    private Personne personne;
 
     public Personne getPersonne() {
         return personne;

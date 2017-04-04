@@ -16,14 +16,14 @@ import static org.mockito.Mockito.*;
  * Created by jeremy on 29/03/2017.
  */
 public class OutilPersonTest {
-    OutilsPerson mockOutilPerson = Mockito.mock(OutilsPerson.class);
-    List<IPerson> persons = new ArrayList<IPerson>();
-    GregorianCalendar gregorianCalendar;
+    private OutilsPerson mockOutilPerson = Mockito.mock(OutilsPerson.class);
+    private List<IPerson> persons = new ArrayList<IPerson>();
+    private GregorianCalendar gregorianCalendar;
 
     @Before
     public void setUp(){
         gregorianCalendar = new GregorianCalendar(2017,3,29);
-//        persons.add(generateMock(22,"jeremy","dolle"));
+        persons.add(generateMock(22,"jeremy","dolle"));
         persons.add(generateMock(0,"melanie","petit"));
     }
 

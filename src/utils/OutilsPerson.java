@@ -5,11 +5,12 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
+ *
  * Created by jeremy on 29/03/2017.
  */
 public class OutilsPerson {
 
-    public static List<IPerson> personBetween(List<IPerson> persons, GregorianCalendar gregorianCalendar,int ageMin, int ageMax)
+    List<IPerson> personBetween(List<IPerson> persons, GregorianCalendar gregorianCalendar, int ageMin, int ageMax)
     {
         List<IPerson> includedPersons = new ArrayList<IPerson>();
         if (ageMin>ageMax)
@@ -24,7 +25,7 @@ public class OutilsPerson {
         return includedPersons;
     }
 
-    public static int recherche(List<IPerson> persons, GregorianCalendar gregorianCalendar)
+    int recherche(List<IPerson> persons, GregorianCalendar gregorianCalendar)
     {
         int maxAge = 0;
 
