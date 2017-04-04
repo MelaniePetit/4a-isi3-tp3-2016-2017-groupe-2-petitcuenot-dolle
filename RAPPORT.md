@@ -4,9 +4,9 @@
 
 # Rapport TP3
 
-## Tests boite noire
+# Tests boite noire
 
-####Question 1 :
+##Question 1 :
 
 Nous avons réalisé l'analyse partionnelle suivant pour chaque classe :
 - Méthode wasBorn() :
@@ -18,7 +18,7 @@ Nous avons réalisé l'analyse partionnelle suivant pour chaque classe :
     - Dates retournant un resultat faux (test avec age incorrect)
     - Dates retournant une exception (mois > 12, jour > 31)
 
-####Question 2 :
+##Question 2 :
  _différentes methodes de test :_
 ```java
         @Test
@@ -52,7 +52,7 @@ Nous avons réalisé l'analyse partionnelle suivant pour chaque classe :
 	}
 ```
 
-####Question 3 :
+##Question 3 :
 _Pour ce faire, il suffit de creer une classe mère qui contiendra les méthodes de test.
 En y ajoutant une methode qui s'executera avant les méthodes de test grace au mot clé @before. 
 Cette méthode va donc initialiser le type de personne. Ainsi, on va creer pour un type de personne,
@@ -68,7 +68,7 @@ une classe associé qui extends la classe mère et qui overide la methode setUp(
     }
 ```
 
-####Question 4 :
+##Question 4 :
 
 _**Simple personne**_ :
 
@@ -88,7 +88,8 @@ _**YetAnotherPerson**_ et _**OneMorePersonn**_ :
 _**SmallCodePersonTest**_ :
  - erreur sur le test getAgeTrueTest
  
-####Question 5 :
+##Question 5 :
+
 Pour ce faire, nous avons choisi d'utiliser le patron _***adaptateur***_ qui va nous permettre,
 en implementant IPerson d'adapter la classe people.Personne afin de pouvoir
 lui faire passer les classes de test faite précedemment. Ainsi, il suffira de faire passer l'adaptateur
@@ -102,10 +103,9 @@ dans la methodes qui initialise la personne.
     }
 ```
 
-## Tests en isolation et Mock
+# Tests en isolation et Mock
 
-
-####Question 6 :
+##Question 6 :
 
 ```java
     List<IPerson> personBetween(List<IPerson> persons, GregorianCalendar gregorianCalendar, int ageMin, int ageMax)
@@ -123,6 +123,7 @@ dans la methodes qui initialise la personne.
 ```
 
 ####Question 7 :
+
 ```java
     int recherche(List<IPerson> persons, GregorianCalendar gregorianCalendar)
     {
@@ -139,6 +140,7 @@ dans la methodes qui initialise la personne.
 ```
 
 ####Question 8 :
+
 ```java
     @Test
     public void personBetweenTest()
@@ -166,10 +168,10 @@ dans la methodes qui initialise la personne.
     }
 ```
 
-####Question 9 :
+##Question 9 :
 
 
-####Question 10 :
+##Question 10 :
 
 
 
