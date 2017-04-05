@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class OutilsPerson {
 
-    List<IPerson> personBetween(List<IPerson> persons, GregorianCalendar gregorianCalendar, int ageMin, int ageMax)
+    public static List<IPerson> personBetween(List<IPerson> persons, GregorianCalendar gregorianCalendar, int ageMin, int ageMax)
     {
         List<IPerson> includedPersons = new ArrayList<IPerson>();
         if (ageMin>ageMax)
@@ -25,7 +25,7 @@ public class OutilsPerson {
         return includedPersons;
     }
 
-    int recherche(List<IPerson> persons, GregorianCalendar gregorianCalendar)
+    public static int recherche(List<IPerson> persons, GregorianCalendar gregorianCalendar)
     {
         int maxAge = 0;
 

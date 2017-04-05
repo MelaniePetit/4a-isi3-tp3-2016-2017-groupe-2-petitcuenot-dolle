@@ -79,8 +79,11 @@ _**EfficientePersonTest**_ :
  - wasBornFalseTest => compare l'age et ne tient pas compte de la date renseignée
  - getAgeTrueTest  => retourn l'age de la personne et ne tient pas compte de la date de référence à laquelle on souhaite connaitre l'age
 
-_**YetAnotherPerson**_ et _**OneMorePersonn**_ : 
+_**YetAnotherPerson**_ :
  - pas d'erreur : test à revoir
+ 
+_**OneMorePersonn**_ : 
+ - getAgeTruTest => Exeption sur le jour même
 
 _**SmallCodePersonTest**_ :
  - erreur sur le test getAgeTrueTest
@@ -105,7 +108,7 @@ dans la methodes qui initialise la personne.
 ## Question 6 :
 
 ```java
-    List<IPerson> personBetween(List<IPerson> persons, GregorianCalendar gregorianCalendar, int ageMin, int ageMax)
+    static List<IPerson> personBetween(List<IPerson> persons, GregorianCalendar gregorianCalendar, int ageMin, int ageMax)
     {
         List<IPerson> includedPersons = new ArrayList<IPerson>();
         if (ageMin>ageMax)
@@ -122,7 +125,7 @@ dans la methodes qui initialise la personne.
 ## Question 7 :
 
 ```java
-    int recherche(List<IPerson> persons, GregorianCalendar gregorianCalendar)
+    static int recherche(List<IPerson> persons, GregorianCalendar gregorianCalendar)
     {
         int maxAge = 0;
         if(persons.isEmpty())
@@ -139,36 +142,80 @@ dans la methodes qui initialise la personne.
 ## Question 8 :
 
 ```java
-    @Test
-    public void personBetweenTest()
-    {
-        mockOutilPerson.personBetween(persons,gregorianCalendar,10,25);
-        mockOutilPerson.personBetween(persons,gregorianCalendar,0,90);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void personBetweenExceptionTest()
-    {
-        mockOutilPerson.personBetween(persons,gregorianCalendar,20,15);
-    }
-
-    @Test
-    public void rechercheTest()
-    {
-        mockOutilPerson.recherche(persons,gregorianCalendar);
-    }
-
-    @Test
-    public void rechercheEmptyListTest()
-    {
-        assertEquals(mockOutilPerson.recherche(new ArrayList<IPerson>(), gregorianCalendar), -1);
-    }
+        private List<IPerson> persons;
+        private GregorianCalendar gregorianCalendar;
+    
+        @Before
+        public void setUp() {
+            persons = new ArrayList<IPerson>();
+            gregorianCalendar = new GregorianCalendar(2017,4,5);
+    
+            persons.add(generateMock(22,"jeremy","dolle"));
+            persons.add(generateMock(40,"mel","petit"));
+        }
+    
+        @Test
+        public void personBetweenTest() {
+            assertThat(OutilsPerson.personBetween(persons,gregorianCalendar,30,45)).containsExactly(persons.get(1));
+        }
+    
+        @Test(expected = IllegalArgumentException.class)
+        public void personBetweenExceptionTest()
+        {
+            assertThat(OutilsPerson.personBetween(new ArrayList<IPerson>(),gregorianCalendar,50,20));
+        }
+    
+        @Test
+        public void rechercheTest()
+        {
+            assertThat(OutilsPerson.recherche(persons,gregorianCalendar)).isEqualTo(40);
+        }
+    
+        @Test
+        public void rechercheEmptyListTest()
+        {
+            assertThat(OutilsPerson.recherche(new ArrayList<IPerson>(),gregorianCalendar)).isEqualTo(-1);
+        }
+    
+        private IPerson generateMock(int age, String name, String lastName){
+            IPerson person = Mockito.mock(IPerson.class);
+            Mockito.when(person.getAge((GregorianCalendar) anyObject())).thenReturn(age);
+            Mockito.when(person.getFirstName()).thenReturn(name);
+            Mockito.when(person.getName()).thenReturn(lastName);
+            return person;
+        }
 ```
 
 ## Question 9 :
 
+Pour faire ceci, il suffit d'utiliser les code coverage disponible dans l'IDE IntelliJ
 
 ## Question 10 :
 
+Il suffit de modifier la generation des mock sans leur spécifier de nom ni de prénom comme suit :
 
+```java
+    private IPerson generateAnonymousMock(int age){
+        IPerson person = Mockito.mock(IPerson.class);
+        Mockito.when(person.getAge((GregorianCalendar) anyObject())).thenReturn(age);
+        return person;
+    }
+```
 
+On creer donc une liste d'anonyme et on la remplie:
+
+```java
+    private List<IPerson> anonymousPersons;
+    ...
+    anonymousPersons.add(generateAnonymousMock(22));
+    anonymousPersons.add(generateAnonymousMock(40));
+```
+
+Et on fait un nouveau test de la fonction recherche avec cette nouvelle liste
+```java
+    @Test
+    public void rechercheAnonymousTest()
+    {
+        assertThat(OutilsPerson.recherche(anonymousPersons,gregorianCalendar)).isEqualTo(40);
+    }
+```

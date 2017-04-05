@@ -44,6 +44,7 @@ public class PersonneTest {
 	public void getAgeTrueTest(){
 		assertTrue(person.getAge(new GregorianCalendar(2017,3,29)) == 22);     //
 		assertTrue(person.getAge(new GregorianCalendar(1995,3,17)) == 0);
+		assertFalse(person.getAge(new GregorianCalendar(1995, 3, 17)) == 0);
 	}
 
 	@Test

@@ -1,6 +1,8 @@
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import persons.IPerson;
 import persons.Person;
 
@@ -8,55 +10,76 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import static org.mockito.Matchers.anyObject;
 
 /**
  *
  * Created by jeremy on 29/03/2017.
  */
+
 public class OutilPersonTest {
-    private OutilsPerson mockOutilPerson = Mockito.mock(OutilsPerson.class);
-    private List<IPerson> persons = new ArrayList<IPerson>();
+
+    private List<IPerson> persons;
+    private List<IPerson> anonymousPersons;
     private GregorianCalendar gregorianCalendar;
 
     @Before
-    public void setUp(){
-        gregorianCalendar = new GregorianCalendar(2017,3,29);
+    public void setUp() {
+        persons = new ArrayList<IPerson>();
+        anonymousPersons = new ArrayList<IPerson>();
+        gregorianCalendar = new GregorianCalendar(2017,4,5);
+
         persons.add(generateMock(22,"jeremy","dolle"));
-        persons.add(generateMock(0,"melanie","petit"));
+        persons.add(generateMock(40,"mel","petit"));
+
+        anonymousPersons.add(generateAnonymousMock(22));
+        anonymousPersons.add(generateAnonymousMock(40));
     }
 
     @Test
-    public void personBetweenTest()
-    {
-        mockOutilPerson.personBetween(persons,gregorianCalendar,10,25);
-        mockOutilPerson.personBetween(persons,gregorianCalendar,0,90);
+    public void personBetweenTest() {
+        assertThat(OutilsPerson.personBetween(persons,gregorianCalendar,30,45)).containsExactly(persons.get(1));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void personBetweenExceptionTest()
     {
-        mockOutilPerson.personBetween(persons,gregorianCalendar,20,15);
+        assertThat(OutilsPerson.personBetween(new ArrayList<IPerson>(),gregorianCalendar,50,20));
     }
 
     @Test
     public void rechercheTest()
     {
-        mockOutilPerson.recherche(persons,gregorianCalendar);
+        assertThat(OutilsPerson.recherche(persons,gregorianCalendar)).isEqualTo(40);
     }
 
     @Test
     public void rechercheEmptyListTest()
     {
-        assertEquals(mockOutilPerson.recherche(new ArrayList<IPerson>(), gregorianCalendar), -1);
+        assertThat(OutilsPerson.recherche(new ArrayList<IPerson>(),gregorianCalendar)).isEqualTo(-1);
     }
 
-    public IPerson generateMock(int age, String name, String lastName){
-        IPerson person = Mockito.mock(Person.class);
-        when(person.getAge((GregorianCalendar) anyObject())).thenReturn(age);
-        when(person.getFirstName()).thenReturn(name);
-        when(person.getName()).thenReturn(lastName);
+    @Test
+    public void rechercheAnonymousTest()
+    {
+        assertThat(OutilsPerson.recherche(anonymousPersons,gregorianCalendar)).isEqualTo(40);
+    }
+
+    private IPerson generateMock(int age, String name, String lastName){
+        IPerson person = Mockito.mock(IPerson.class);
+        Mockito.when(person.getAge((GregorianCalendar) anyObject())).thenReturn(age);
+        Mockito.when(person.getFirstName()).thenReturn(name);
+        Mockito.when(person.getName()).thenReturn(lastName);
+        return person;
+    }
+
+    private IPerson generateAnonymousMock(int age){
+        IPerson person = Mockito.mock(IPerson.class);
+        Mockito.when(person.getAge((GregorianCalendar) anyObject())).thenReturn(age);
         return person;
     }
 }
