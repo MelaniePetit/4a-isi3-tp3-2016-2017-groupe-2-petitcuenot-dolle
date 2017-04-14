@@ -8,7 +8,8 @@
 
 ## Question 1 :
 
-Nous avons réalisé l'analyse partionnelle suivant pour chaque classe :
+Nous avons réalisé l'analyse partionnelle suivante pour chaque classe :
+
 - **Méthode wasBorn()** :
     - Dates retournant un résultat vrai (après la date de naissance)
     - Dates retournant un resultat faux (avant la date de naissance)
@@ -20,44 +21,49 @@ Nous avons réalisé l'analyse partionnelle suivant pour chaque classe :
 
 ## Question 2 :
 
- _différentes methodes de test :_
+ Voici les différents tests mis en place dans la classe _PersonTest_. Tous les tests réussissent.
+ 
 ```java
+    public class PersonneTest {
+    
+        private IPerson person;
+            @Test
+        public void wasBornTrueTest() {
+            assertTrue(person.wasBorn(new GregorianCalendar(1995, 3, 17)));      // Exact Date
+            assertTrue(person.wasBorn(new GregorianCalendar(2016, 2, 29)));      // After Date + Bisextil
+            assertTrue(person.wasBorn(new GregorianCalendar(2017, 12, 10)));     // GregorianCalendar month +1
+        }
+    
         @Test
-	public void wasBornTrueTest() {
-		assertTrue(person.wasBorn(new GregorianCalendar(1995, 3, 17)));      // Exact Date
-		assertTrue(person.wasBorn(new GregorianCalendar(2016, 2, 29)));      // After Date + Bisextil
-		assertTrue(person.wasBorn(new GregorianCalendar(2017, 12, 10)));     // GregorianCalendar month +1
-	}
-
-	@Test
-	public void wasBornFalseTest()
-	{
-		assertFalse(person.wasBorn(new GregorianCalendar(1993, 5, 28)));     // Before Date
-	}
-
-	@Test
-	public void getAgeTrueTest(){
-		assertTrue(person.getAge(new GregorianCalendar(2017,3,29)) == 22);     //
-		assertTrue(person.getAge(new GregorianCalendar(1995,3,17)) == 0);
-	}
-
-	@Test
-	public void getAgeFalseTest(){
-		assertFalse(person.getAge(new GregorianCalendar(2017,3,29)) == 12);
-		assertFalse(person.getAge(new GregorianCalendar(2017,3,29)) == 100);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void getAgeExceptionTest(){
-		assertThat(person.getAge(new GregorianCalendar(1955,3,17)) == 0);
-	}
+        public void wasBornFalseTest()
+        {
+            assertFalse(person.wasBorn(new GregorianCalendar(1993, 5, 28)));     // Before Date
+        }
+    
+        @Test
+        public void getAgeTrueTest(){
+            assertTrue(person.getAge(new GregorianCalendar(2017,3,29)) == 22);     
+            assertTrue(person.getAge(new GregorianCalendar(1995,3,17)) == 0);
+        }
+    
+        @Test
+        public void getAgeFalseTest(){
+            assertFalse(person.getAge(new GregorianCalendar(2017,3,29)) == 12);
+            assertFalse(person.getAge(new GregorianCalendar(2017,3,29)) == 100);
+        }
+    
+        @Test(expected = IllegalArgumentException.class)
+        public void getAgeExceptionTest(){
+            assertThat(person.getAge(new GregorianCalendar(1955,3,17)) == 0);
+        }
+    }
 ```
 
 ## Question 3 :
-_Pour ce faire, il suffit de creer une classe mère qui contiendra les méthodes de test.
-En y ajoutant une methode qui s'executera avant les méthodes de test grace au mot clé @before. 
-Cette méthode va donc initialiser le type de personne. Ainsi, on va creer pour un type de personne,
-une classe associé qui extends la classe mère et qui overide la methode setUp()._ 
+
+
+Pour ce faire, il suffit de créer une classe mère qui contiendra les méthodes de test. On y ajoute une methode qui s'execute avant les méthodes de test grâce au mot clé @before. 
+Cette méthode va initialiser le type de personne. Ainsi, pour un type de personne on va créer une classe associée qui extends la classe mère et qui override la methode setUp(). 
 
 ```java
     public class PoeplePersonneTest extends PersonneTest{
@@ -90,43 +96,81 @@ _**SmallCodePersonTest**_ :
  
 ## Question 5 :
 
-Pour ce faire, nous avons choisi d'utiliser le patron _***adaptateur***_ qui va nous permettre,
-en implementant IPerson d'adapter la classe people.Personne afin de pouvoir
-lui faire passer les classes de test faite précedemment. Ainsi, il suffira de faire passer l'adaptateur
-dans la methodes qui initialise la personne.
+Nous avons choisi d'utiliser le patron _***adaptateur***_ qui va nous permettre d'adapter la classe People en implementant l'interface IPerson. 
+
+```java 
+    public class PersonneAdaptateur implements IPerson {
+    
+        private Personne personne;
+    
+        public Personne getPersonne() {
+            return personne;
+        }
+    
+        public PersonneAdaptateur(String name, String lastname, int month, int day, int year) {
+            this.personne = new Personne(lastname,name,day,month,year);
+        }
+    
+        public String getName() {
+            return getPersonne().getName();
+        }
+    
+        public String getFirstName() {
+            return getPersonne().getFirstName();
+        }
+    
+        public boolean wasBorn(GregorianCalendar gregorianCalendar) {
+            return getAge(gregorianCalendar) >= 0;
+        }
+    
+        public int getAge(GregorianCalendar gregorianCalendar) {
+            return getPersonne().getAge(gregorianCalendar);
+        }
+    }
+
+```
+Ainsi, nous allons pouvoir lui faire passer les classes de test faites précedemment. Il suffira de faire passer l'adaptateur dans la methodes qui initialise la personne.
 
 ```java
-    @Override
-    public void setUp() {
-        PersonneAdaptateur personneAdaptateur = new PersonneAdaptateur("PETITCUENOT","Melanie",17,3,1995);
-        super.setPerson(personneAdaptateur);
-    }
+    public class PoeplePersonneTest extends PersonneTest{
+    
+        @Override
+        public void setUp() {
+            PersonneAdaptateur personneAdaptateur = new PersonneAdaptateur("PETITCUENOT","Melanie",17,3,1995);
+            super.setPerson(personneAdaptateur);
+        }
+    }  
 ```
 
 # Tests en isolation et Mock
 
 ## Question 6 :
 
+Voici la méthode de la classe _OutilPerson_ que nous avons implémentée.
+
 ```java
-    static List<IPerson> personBetween(List<IPerson> persons, GregorianCalendar gregorianCalendar, int ageMin, int ageMax)
-    {
-        List<IPerson> includedPersons = new ArrayList<IPerson>();
-        if (ageMin>ageMax)
-            throw new IllegalArgumentException("Illegal");
-        for(IPerson person : persons)
-        {
-            if(person.getAge(gregorianCalendar) > ageMin && person.getAge(gregorianCalendar) < ageMax)
-                includedPersons.add(person);
-        }
-        return includedPersons;
+    public class OutilsPerson {
+        static List<IPerson> personBetween(List<IPerson> persons, GregorianCalendar gregorianCalendar, int ageMin, int ageMax)
+            {
+                List<IPerson> includedPersons = new ArrayList<IPerson>();
+                if (ageMin>ageMax)
+                    throw new IllegalArgumentException("Illegal");
+                for(IPerson person : persons)
+                {
+                    if(person.getAge(gregorianCalendar) > ageMin && person.getAge(gregorianCalendar) < ageMax)
+                        includedPersons.add(person);
+                }
+                return includedPersons;
+            }
     }
 ```
 
 ## Question 7 :
 
+Voici la méthode de la classe _OutilPerson_ que nous avons implémentée.
+
 ```java
-    static int recherche(List<IPerson> persons, GregorianCalendar gregorianCalendar)
-    {
+    static int recherche(List<IPerson> persons, GregorianCalendar gregorianCalendar){
         int maxAge = 0;
         if(persons.isEmpty())
             return -1;
@@ -141,58 +185,62 @@ dans la methodes qui initialise la personne.
 
 ## Question 8 :
 
+La première methode de la classe est précédée du mot clé _@before_. Cette méthode initialise entre autre les Mocks.  
+
 ```java
-        private List<IPerson> persons;
-        private GregorianCalendar gregorianCalendar;
-    
-        @Before
-        public void setUp() {
-            persons = new ArrayList<IPerson>();
-            gregorianCalendar = new GregorianCalendar(2017,4,5);
-    
-            persons.add(generateMock(22,"jeremy","dolle"));
-            persons.add(generateMock(40,"mel","petit"));
-        }
-    
-        @Test
-        public void personBetweenTest() {
-            assertThat(OutilsPerson.personBetween(persons,gregorianCalendar,30,45)).containsExactly(persons.get(1));
-        }
-    
-        @Test(expected = IllegalArgumentException.class)
-        public void personBetweenExceptionTest()
-        {
-            assertThat(OutilsPerson.personBetween(new ArrayList<IPerson>(),gregorianCalendar,50,20));
-        }
-    
-        @Test
-        public void rechercheTest()
-        {
-            assertThat(OutilsPerson.recherche(persons,gregorianCalendar)).isEqualTo(40);
-        }
-    
-        @Test
-        public void rechercheEmptyListTest()
-        {
-            assertThat(OutilsPerson.recherche(new ArrayList<IPerson>(),gregorianCalendar)).isEqualTo(-1);
-        }
-    
-        private IPerson generateMock(int age, String name, String lastName){
-            IPerson person = Mockito.mock(IPerson.class);
-            Mockito.when(person.getAge((GregorianCalendar) anyObject())).thenReturn(age);
-            Mockito.when(person.getFirstName()).thenReturn(name);
-            Mockito.when(person.getName()).thenReturn(lastName);
-            return person;
-        }
+       public class OutilPersonTest {
+       
+           private List<IPerson> persons;
+           private GregorianCalendar gregorianCalendar;
+           
+           @Before
+           public void setUp() {
+               persons = new ArrayList<IPerson>();
+               gregorianCalendar = new GregorianCalendar(2017,4,5);
+               persons.add(generateMock(22,"jeremy","dolle"));
+               persons.add(generateMock(40,"mel","petit"));
+           }
+        
+           @Test
+           public void personBetweenTest() {
+               assertThat(OutilsPerson.personBetween(persons,gregorianCalendar,30,45)).containsExactly(persons.get(1));
+           }
+        
+           @Test(expected = IllegalArgumentException.class)
+           public void personBetweenExceptionTest(){
+               assertThat(OutilsPerson.personBetween(new ArrayList<IPerson>(),gregorianCalendar,50,20));
+           }
+        
+           @Test
+           public void rechercheTest(){
+               assertThat(OutilsPerson.recherche(persons,gregorianCalendar)).isEqualTo(40);
+           }
+        
+           @Test
+           public void rechercheEmptyListTest(){
+               assertThat(OutilsPerson.recherche(new ArrayList<IPerson>(),gregorianCalendar)).isEqualTo(-1);
+           }
+        
+           private IPerson generateMock(int age, String name, String lastName){
+               IPerson person = Mockito.mock(IPerson.class);
+               Mockito.when(person.getAge((GregorianCalendar) anyObject())).thenReturn(age);
+               Mockito.when(person.getFirstName()).thenReturn(name);
+               Mockito.when(person.getName()).thenReturn(lastName);
+               return person;
+           }
+       }
 ```
 
 ## Question 9 :
 
-Pour faire ceci, il suffit d'utiliser les code coverage disponible dans l'IDE IntelliJ
+Pour faire ceci, il suffit d'utiliser le code Coverage disponible dans l'IDE IntelliJ. Pour la classe _OutilPersonnTest_,
+on obtient le résultat suivant : 
+
+![coverage](images/TestCoverage.JPG)
 
 ## Question 10 :
 
-Il suffit de modifier la generation des mock sans leur spécifier de nom ni de prénom comme suit :
+Il suffit de modifier la generation des mock sans leur spécifier de nom ni de prénom :
 
 ```java
     private IPerson generateAnonymousMock(int age){
@@ -202,7 +250,7 @@ Il suffit de modifier la generation des mock sans leur spécifier de nom ni de p
     }
 ```
 
-On creer donc une liste d'anonyme et on la remplie:
+On crée alors une liste d'anonyme qui contient nos Mocks :
 
 ```java
     private List<IPerson> anonymousPersons;
@@ -211,7 +259,8 @@ On creer donc une liste d'anonyme et on la remplie:
     anonymousPersons.add(generateAnonymousMock(40));
 ```
 
-Et on fait un nouveau test de la fonction recherche avec cette nouvelle liste
+Puis on écrit un nouveau test de la fonction recherche avec cette nouvelle liste :
+
 ```java
     @Test
     public void rechercheAnonymousTest()
