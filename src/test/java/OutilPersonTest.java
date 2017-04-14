@@ -15,6 +15,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 /**
  *
@@ -24,20 +26,16 @@ import static org.mockito.Matchers.anyObject;
 public class OutilPersonTest {
 
     private List<IPerson> persons;
-    private List<IPerson> anonymousPersons;
     private GregorianCalendar gregorianCalendar;
 
     @Before
     public void setUp() {
         persons = new ArrayList<IPerson>();
-        anonymousPersons = new ArrayList<IPerson>();
         gregorianCalendar = new GregorianCalendar(2017,4,5);
 
         persons.add(generateMock(22,"jeremy","dolle"));
         persons.add(generateMock(40,"mel","petit"));
 
-        anonymousPersons.add(generateAnonymousMock(22));
-        anonymousPersons.add(generateAnonymousMock(40));
     }
 
     @Test
@@ -64,9 +62,12 @@ public class OutilPersonTest {
     }
 
     @Test
-    public void rechercheAnonymousTest()
+    public void AnonymousTest()
     {
-        assertThat(OutilsPerson.recherche(anonymousPersons,gregorianCalendar)).isEqualTo(40);
+        for (int i = 0; i < persons.size() ; i++) {
+            verify(persons.get(i),never()).getFirstName();
+            verify(persons.get(i),never()).getName();
+        }
     }
 
     private IPerson generateMock(int age, String name, String lastName){
@@ -77,9 +78,4 @@ public class OutilPersonTest {
         return person;
     }
 
-    private IPerson generateAnonymousMock(int age){
-        IPerson person = Mockito.mock(IPerson.class);
-        Mockito.when(person.getAge((GregorianCalendar) anyObject())).thenReturn(age);
-        return person;
-    }
 }
