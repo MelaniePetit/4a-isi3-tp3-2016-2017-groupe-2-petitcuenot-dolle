@@ -240,31 +240,15 @@ on obtient le résultat suivant :
 
 ## Question 10 :
 
-Il suffit de modifier la generation des mock sans leur spécifier de nom ni de prénom :
-
-```java
-    private IPerson generateAnonymousMock(int age){
-        IPerson person = Mockito.mock(IPerson.class);
-        Mockito.when(person.getAge((GregorianCalendar) anyObject())).thenReturn(age);
-        return person;
-    }
-```
-
-On crée alors une liste d'anonyme qui contient nos Mocks :
-
-```java
-    private List<IPerson> anonymousPersons;
-    ...
-    anonymousPersons.add(generateAnonymousMock(22));
-    anonymousPersons.add(generateAnonymousMock(40));
-```
-
-Puis on écrit un nouveau test de la fonction recherche avec cette nouvelle liste :
+Il suffit de creer un nouveau test en verifiant que les methodes _getFirstName()_ et _getName()_ ne sont jamais appellées grace à la méthodes _never()_ de Mockito :
 
 ```java
     @Test
-    public void rechercheAnonymousTest()
+    public void AnonymousTest()
     {
-        assertThat(OutilsPerson.recherche(anonymousPersons,gregorianCalendar)).isEqualTo(40);
+        for (int i = 0; i < persons.size() ; i++) {
+            verify(persons.get(i),never()).getFirstName();
+            verify(persons.get(i),never()).getName();
+        }
     }
 ```
